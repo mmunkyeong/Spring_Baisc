@@ -78,6 +78,23 @@ public class HomeController {
       return "%d번 사람이 삭제되었습니다.".formatted(id);
     }
 
+    @GetMapping("/home/modifyPerson")
+    @ResponseBody
+    public String PersonModify(int id,String name,int age){
+        Person find=list
+                .stream()
+                .filter(p->p.getId()==id)
+                .findFirst()
+                .orElse(null);
+
+        if(find==null) {
+            return "%d번 사람이 존재하지 않습니다!".formatted(id);
+        }
+        find.setName(name);
+        find.setAge(age);
+        return "%d번 사람이 수정되었습니다.".formatted(id);
+    }
+
     @GetMapping("/home/people")
     @ResponseBody
     public String showPerson(){
