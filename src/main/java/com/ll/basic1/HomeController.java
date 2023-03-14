@@ -1,16 +1,31 @@
 package com.ll.basic1;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 // 컴퓨터가 이해할 수 있는 주석과 같음 (개발자가 스프링부트에게 말함)
 // 아래 있는 HomeController는 컨트롤러다
 
 public class HomeController {
-    private int count=-1;
+    private int count;
+    ArrayList<Person> list;
+    private int id=0;
+
+    public HomeController(){
+        count=-1;
+        list=new ArrayList<>();
+    }
+
     @GetMapping("/home/main")
     //만약에  /home/main 이런 요청이 오면 아래 메서드를 실행해줘
 
@@ -43,5 +58,56 @@ public class HomeController {
     //@RequestParam 생략가능
     public int showPlus(@RequestParam(defaultValue = "0")int a,@RequestParam int b){
         return a+b;
+    }
+
+    @GetMapping("/home/addPerson")
+    @ResponseBody
+    public String PersonAdd(String name,int age){
+    Person p=new Person(name,age);
+    list.add(p);
+        return p.getId()+"번 사람이 추가되었습니다.";
+    }
+
+    @GetMapping("/home/removePerson")
+    @ResponseBody
+    public String PersonRemove(int id){
+       boolean removed=list.removeIf(person->person.getId()==id);
+       if(removed==false) {
+           return "%d번 사람이 존재하지 않습니다!".formatted(id);
+       }
+      return "%d번 사람이 삭제되었습니다.".formatted(id);
+    }
+
+    @GetMapping("/home/people")
+    @ResponseBody
+    public String showPerson(){
+        return list.toString();
+    }
+}
+@AllArgsConstructor //모든 생성자
+@Getter // 따로 선언하지 않아도 Get 생성
+@Setter //set도 마찬가지
+class Person{
+    private static int lastid;
+    private int id;
+    private String name;
+    private int age;
+    static{
+        lastid=0;
+    }
+
+Person(String name,int age){
+    this(++lastid, name,age);
+}
+    Person(int id){
+        this.id=id;
+    }
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + getId() +
+                ", name='" + getName() + '\'' +
+                ", age=" + getAge() +
+                '}'+"\n";
     }
 }
