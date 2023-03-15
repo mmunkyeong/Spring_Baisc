@@ -1,4 +1,4 @@
-package com.ll.basic1;
+package com.ll.basic1.boundedContext.home.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -6,19 +6,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
-import java.util.*;
-
-
-@Controller
-// 컴퓨터가 이해할 수 있는 주석과 같음 (개발자가 스프링부트에게 말함)
-// 아래 있는 HomeController는 컨트롤러다
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class HomeController {
     private int count;
