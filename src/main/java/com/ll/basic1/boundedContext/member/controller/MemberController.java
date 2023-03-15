@@ -52,8 +52,8 @@ public class MemberController {
             Arrays.stream(req.getCookies())
                     .filter(cookie -> cookie.getName().equals("loginedMemberId"))
                     .forEach(cookie -> {
-                        cookie.setMaxAge(0);
-                        resp.addCookie(cookie);
+                        cookie.setMaxAge(0); // 쿠키의 수명을 0으로
+                        resp.addCookie(cookie); // 쿠키의 수명을 실어 보내기
                     });
         }
 
@@ -69,7 +69,7 @@ public class MemberController {
             loginedMemberId = Arrays.stream(req.getCookies())
                     .filter(cookie -> cookie.getName().equals("loginedMemberId"))
                     .map(Cookie::getValue)
-                    .mapToInt(Integer::parseInt)
+                    .mapToLong(Long::parseLong)
                     .findFirst()
                     .orElse(0);
         }
