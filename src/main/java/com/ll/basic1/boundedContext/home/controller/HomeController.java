@@ -1,11 +1,14 @@
 package com.ll.basic1.boundedContext.home.controller;
 
+import com.ll.basic1.boundedContext.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,14 +17,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// @Controller 의 의미
+// 개발자가 스프링부트에게 말한다.
+// 아래 있는 HomeController 는 컨트롤러이다.
+@Controller
 public class HomeController {
     private int count;
     ArrayList<Person> list;
     private int id = 0;
+    private final MemberService memberService;
 
-    public HomeController() {
+    public HomeController(MemberService memberService) {
         count = -1;
         list = new ArrayList<>();
+        this.memberService=memberService;
     }
 
     @GetMapping("/home/main")
@@ -100,6 +109,7 @@ public class HomeController {
     public String showPerson() {
         return list.toString();
     }
+
 
     @GetMapping("/home/reqAndResp")
     @ResponseBody
