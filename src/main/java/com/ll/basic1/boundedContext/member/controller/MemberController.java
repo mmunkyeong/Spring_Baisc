@@ -17,8 +17,26 @@ public class MemberController {
     private final Rq rq;
     // 생성자 주입
 
-
     @GetMapping("/member/login")
+    @ResponseBody
+    public String showLogin(){
+        if(rq.isLogined()){
+            return """
+                  <h1> 이미 로그인 되었습니다. </h1>
+                  """.stripIndent();
+        }
+        return """
+                <h1>로그인</h1>
+                 <form action="doLogin">
+                 <input type="text" placeholder="아이디" name="username">
+                 <input type="password" placeholder="비번호" name="password">
+                 <input type="submit" value="로그인">
+                 </form>
+                """;
+    }
+
+
+    @GetMapping("/member/doLogin")
     @ResponseBody
     public RsData login(String username, String password) {
 
@@ -34,7 +52,7 @@ public class MemberController {
 
         if (rsData.isSuccess()) {
             Member member = (Member) rsData.getData();
-            rq.setCookie("loginedMemberId", member.getId());
+            rq.setSession("loginedMemberId", member.getId());
         }
 
         return rsData;
@@ -43,7 +61,7 @@ public class MemberController {
     @GetMapping("/member/logout")
     @ResponseBody
     public RsData logout() {
-        boolean cookieRemoved = rq.removeCookie("loginedMemberId");
+        boolean cookieRemoved = rq.removeSession("loginedMemberId");
 
         if (cookieRemoved == false) {
             return RsData.of("S-2", "이미 로그아웃 상태입니다.");
@@ -55,7 +73,7 @@ public class MemberController {
     @GetMapping("/member/me")
     @ResponseBody
     public RsData showMe() {
-        long loginedMemberId = rq.getCookieAsLong("loginedMemberId", 0);
+        long loginedMemberId = rq.getSessionAsLong("loginedMemberId", 0);
 
         boolean isLogined = loginedMemberId > 0;
 
@@ -65,5 +83,10 @@ public class MemberController {
         Member member = memberService.findById(loginedMemberId);
 
         return RsData.of("S-1", "당신의 username(은)는 %s 입니다.".formatted(member.getUsername()));
+    }
+    @GetMapping("/member/session")
+    @ResponseBody
+    public String showSession() {
+        return rq.getSessionDebugContents().replaceAll("\n", "<br>");
     }
 }
