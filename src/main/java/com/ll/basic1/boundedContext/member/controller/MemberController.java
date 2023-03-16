@@ -1,12 +1,16 @@
 package com.ll.basic1.boundedContext.member.controller;
 
+
 import com.ll.basic1.base.rq.Rq;
 import com.ll.basic1.base.rsData.RsData;
 import com.ll.basic1.boundedContext.member.entity.Member;
 import com.ll.basic1.boundedContext.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
@@ -21,7 +25,7 @@ public class MemberController {
     public String showLogin() {
             return "usr/member/login";
     }
-    @GetMapping("/member/doLogin")
+    @PostMapping ("/member/login") //get, post 메소드가 다르기 때문에 url이 똑같아도 ok
     @ResponseBody
     public RsData login(String username, String password) {
 
@@ -56,18 +60,15 @@ public class MemberController {
     }
 
     @GetMapping("/member/me")
-    @ResponseBody
-    public RsData showMe() {
-        long loginedMemberId = rq.getSessionAsLong("loginedMemberId", 0);
+    public String showMe(Model model) {
+       long loginedMemberId= rq.getLoginedMemberId();
 
-        boolean isLogined = loginedMemberId > 0;
+       Member member= memberService.findById(loginedMemberId);
+        System.out.println(member);
+        //req.setAttribute("m1",member); // me.html 정보 전달
 
-        if (isLogined == false)
-            return RsData.of("F-1", "로그인 후 이용해주세요.");
-
-        Member member = memberService.findById(loginedMemberId);
-
-        return RsData.of("S-1", "당신의 username(은)는 %s 입니다.".formatted(member.getUsername()));
+        model.addAttribute("member",member);
+   return "usr/member/me";
     }
     @GetMapping("/member/session")
     @ResponseBody
